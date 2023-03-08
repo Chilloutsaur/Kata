@@ -3,6 +3,12 @@ package Kata_Calc_Test;
 import java.util.TreeMap;
 
 class Main {
+    public static void main(String[] args) {
+        System.out.println(calc("X*V"));
+        System.out.println(calc("8-3"));
+
+    }
+
     public static String calc(String input) {
         String[] operations = {"+", "-", "/", "*"};
         String[] regex = {"\\+", "-", "/", "\\*"};
@@ -17,8 +23,8 @@ class Main {
         }
         if (index == -1) {
             System.out.println("операция не найдена");
-            return null;
         }
+        String fResult = "";
 
         //деление строки по знаку:
         String[] spl = input.split(regex[index]);
@@ -41,6 +47,7 @@ class Main {
 
 
             int result = switch (operations[index]) {
+
                 case "+" -> a + b;
                 case "-" -> a - b;
                 case "*" -> a * b;
@@ -50,14 +57,16 @@ class Main {
 
             // Возврат в соответствующем формате:
             if (isRoman) {
-                System.out.println(converter.intToRoman(result));
+                return converter.intToRoman(result);
             } else {
-                System.out.println(result);
+                fResult = String.valueOf(result);
+                return fResult;
             }
-        } else {
-            System.out.println("Ошибка. Разные форматы");
         }
-        return null;
+        else {
+            System.out.println("Ошибка. Разные форматы");
+            return null;
+        }
     }
 
 
@@ -99,7 +108,6 @@ class Main {
                 number -= arabianKey;
             } while (number != 0);
             return roman.toString();
-
 
         }
 
