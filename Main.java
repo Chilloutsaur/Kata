@@ -3,15 +3,19 @@ package Kata_Calc_Test;
 import java.util.TreeMap;
 
 class Main {
-    public static void main(String[] args) {
-        System.out.println(calc("X*V"));
-        System.out.println(calc("8-3"));
+    public static void main(String[] args) throws Exception {
+        System.out.println(calc("X/V"));
 
     }
 
-    public static String calc(String input) {
+    public static String calc(String input) throws Exception {
         String[] operations = {"+", "-", "/", "*"};
         String[] regex = {"\\+", "-", "/", "\\*"};
+
+        String[] operands = input.split("[+\\-*/]");
+        if (operands.length != 2) {
+            throw new Exception("Должно быть два операнда");
+        }
 
         // определение операции
         int index = -1;
@@ -24,7 +28,7 @@ class Main {
         if (index == -1) {
             System.out.println("операция не найдена");
         }
-        String fResult = "";
+        String fResult;
 
         //деление строки по знаку:
         String[] spl = input.split(regex[index]);
@@ -34,7 +38,6 @@ class Main {
         //Проверка одинакового формата:
         if (converter.isRoman(spl[0]) == converter.isRoman(spl[1])) {
             int a, b;
-
             //Проверка формата:
             boolean isRoman = converter.isRoman(spl[0]);
             if (isRoman) {
@@ -45,8 +48,11 @@ class Main {
                 b = Integer.parseInt(spl[1]);
             }
 
+            if (a > 10 || b > 10) {
+                throw new Exception("Числа должны быть от 1 до 10");
+            }
 
-            int result = switch (operations[index]) {
+            int option = switch (operations[index]) {
 
                 case "+" -> a + b;
                 case "-" -> a - b;
@@ -56,25 +62,26 @@ class Main {
 
 
             // Возврат в соответствующем формате:
+            if (isRoman && option == 0) {
+                throw new Exception("В римских числах нет 0");
+            }
             if (isRoman) {
-                return converter.intToRoman(result);
+                return converter.intToRoman(option);
             } else {
-                fResult = String.valueOf(result);
+                fResult = String.valueOf(option);
                 return fResult;
             }
-        }
-        else {
-            System.out.println("Ошибка. Разные форматы");
-            return null;
+        } else {
+            throw new Exception("Разные форматы");
         }
     }
 
 
-     static class Converter {
+    static class Converter {
         TreeMap<Character, Integer> romanKeyMap = new TreeMap<>();
         TreeMap<Integer, String> arabianKeyMap = new TreeMap<>();
 
-         Converter() {
+        Converter() {
             romanKeyMap.put('I', 1);
             romanKeyMap.put('V', 5);
             romanKeyMap.put('X', 10);
@@ -94,12 +101,12 @@ class Main {
         }
 
 
-         boolean isRoman(String number) {
+        boolean isRoman(String number) {
             return romanKeyMap.containsKey(number.charAt(0));
         }
 
 
-         String intToRoman(int number) {
+        String intToRoman(int number) {
             StringBuilder roman = new StringBuilder();
             int arabianKey;
             do {
@@ -111,23 +118,39 @@ class Main {
 
         }
 
-         int romanToInt(String s) {
-            int end = s.length() - 1;
-            char[] arr = s.toCharArray();
-            int arabian;
-            int result = romanKeyMap.get(arr[end]);
-            for (int i = end - 1; i >= 0; i--) {
-                arabian = romanKeyMap.get(arr[i]);
+        int romanToInt(String s) {
+            String[] romanArray = new String[]{"0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+            boolean rim = false;
 
-                if (arabian < romanKeyMap.get(arr[i + 1])) {
-                    result -= arabian;
-                } else {
-                    result += arabian;
+            for (String value : romanArray) {
+                if (s.equals(value)) {
+                    rim = true;
+                    break;
                 }
-
-
             }
-            return result;
+
+            if (rim) {
+                int end = s.length() - 1;
+                char[] arr = s.toCharArray();
+
+
+                int arabian;
+
+                int result = romanKeyMap.get(arr[end]);
+
+                for (int y = end - 1; y >= 0; y--) {
+                    arabian = romanKeyMap.get(arr[y]);
+
+                    if (arabian < romanKeyMap.get(arr[y + 1])) {
+                        result -= arabian;
+                    } else {
+                        result += arabian;
+                    }
+                }
+                return result;
+            } else {
+                throw new RuntimeException("Некорректное римское число");
+            }
         }
     }
 }
