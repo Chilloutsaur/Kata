@@ -1,10 +1,15 @@
 package Kata_Calc_Test;
 
 import java.util.TreeMap;
+import java.util.Scanner;
 
-class Main {
+class Main2 {
+
     public static void main(String[] args) throws Exception {
-        System.out.println(calc("X/V"));
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите выражение:");
+        String str = scanner.nextLine();
+        System.out.println(calc(str));
 
     }
 
@@ -115,7 +120,6 @@ class Main {
                 number -= arabianKey;
             } while (number != 0);
             return roman.toString();
-
         }
 
         int romanToInt(String s) {
@@ -132,15 +136,10 @@ class Main {
             if (rim) {
                 int end = s.length() - 1;
                 char[] arr = s.toCharArray();
-
-
                 int arabian;
-
                 int result = romanKeyMap.get(arr[end]);
-
                 for (int y = end - 1; y >= 0; y--) {
                     arabian = romanKeyMap.get(arr[y]);
-
                     if (arabian < romanKeyMap.get(arr[y + 1])) {
                         result -= arabian;
                     } else {
